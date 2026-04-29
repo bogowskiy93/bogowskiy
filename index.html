@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Portfolio</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <!-- ═══ SPLASH ═══ -->
+  <div class="splash" id="splash" aria-hidden="true">
+    <div class="splash-inner">
+      <div class="splash-logo">Bogowskiy Portfolio</div>
+      <div class="splash-track"><div class="splash-fill" id="splash-fill"></div></div>
+      <div class="splash-status" id="splash-status">Загрузка...</div>
+    </div>
+  </div>
+
+  <!-- ═══ ЛАЙТБОКС ТЕКСТУРЫ ═══ -->
+  <div class="tex-lightbox" id="tex-lightbox" aria-hidden="true">
+    <div class="tex-lb-box">
+      <button class="tex-lb-close" id="tex-lb-close" aria-label="Закрыть">✕</button>
+      <div class="tex-lb-header">
+        <span class="tex-lb-channel" id="tex-lb-channel">Diffuse</span>
+        <span class="tex-lb-info" id="tex-lb-info">—</span>
+      </div>
+      <div class="tex-lb-img-wrap" id="tex-lb-img-wrap">
+        <canvas class="tex-lb-canvas" id="tex-lb-canvas"></canvas>
+        <div class="tex-lb-shield" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ ОНБОРДИНГ ═══ -->
+  <div class="onboard-overlay" id="onboard" aria-modal="true" role="dialog" aria-labelledby="onboard-title">
+    <div class="onboard-box">
+      <div class="onboard-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="8" width="26" height="32" rx="3" stroke="currentColor" stroke-width="2"/>
+          <rect x="9" y="14" width="16" height="10" rx="1.5" fill="currentColor" opacity="0.18"/>
+          <rect x="9" y="27" width="8" height="1.5" rx="0.75" fill="currentColor" opacity="0.5"/>
+          <rect x="9" y="31" width="12" height="1.5" rx="0.75" fill="currentColor" opacity="0.35"/>
+          <path d="M32 28 L44 40" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="36" cy="32" r="1.5" fill="currentColor" opacity="0.6"/>
+        </svg>
+      </div>
+      <p class="onboard-label" id="onboard-title">Как пользоваться</p>
+      <h2 class="onboard-heading">Нажмите на любую работу</h2>
+      <p class="onboard-text">
+        Откроется 3D&#8209;вьюер — можно вращать модель, менять режим отображения и переключать расцветки.
+      </p>
+      <div class="onboard-hint">
+        <span class="onboard-hint-key">ЛКМ</span> вращение &nbsp;·&nbsp;
+        <span class="onboard-hint-key">Колесо</span> зум &nbsp;·&nbsp;
+        <span class="onboard-hint-key">ПКМ</span> перемещение
+      </div>
+      <button class="onboard-btn" id="onboard-close" type="button">Понятно</button>
+    </div>
+  </div>
+
+  <!-- ═══ ГЛАВНАЯ ═══ -->
+  <div class="page-shell">
+
+    <header>
+      <span class="logo">Bogowskiy Portfolio</span>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Сменить тему">
+        <span class="theme-toggle-label">XP</span>
+      </button>
+    </header>
+
+    <main class="main-layout">
+
+      <!-- Левая колонка: инфо обо мне -->
+      <section class="about-col">
+        <div class="about-inner">
+          <p class="label">3D Дизайнер одежды · Геймдев</p>
+          <h1 class="about-name"><span id="typewriter"></span><span class="cursor">|</span><span class="status-dot" id="status-dot"></span></h1>
+          <p class="about-bio">
+            Делаю реальную одежду в 3D
+          </p>
+
+          <div class="skills">
+            <span class="skill-tag">Marvelous Designer</span>
+            <span class="skill-tag">Blender</span>
+            <span class="skill-tag">Substance 3D Painter</span>
+            <span class="skill-tag">Photoshop</span>
+          </div>
+
+          <div class="contacts">
+            <a href="mailto:you@example.com" class="contact-link">Email</a>
+            <a href="https://t.me/username" class="contact-link" target="_blank">Telegram</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Правая колонка: строка работ -->
+      <section class="works-col">
+        <p class="label works-label">Работы</p>
+        <div class="works-content">
+          <div class="works-row" id="works-row"></div>
+          <nav class="pages-list" id="pages-list" aria-label="Страницы"></nav>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ═══ МОДАЛКА ВЬЮЕРА ═══ -->
+  <div class="modal-overlay" id="modal" aria-hidden="true">
+    <div class="modal-box">
+
+      <button class="modal-close" id="modal-close">Закрыть</button>
+
+      <!-- Левая панель мета -->
+      <aside class="modal-meta">
+        <h2 class="modal-title" id="modal-title">—</h2>
+
+        <div class="meta-row">
+          <div class="meta-label">Год</div>
+          <div class="meta-value" id="modal-year">—</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-label">Заказчик</div>
+          <div class="meta-value" id="modal-client">—</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-label">Назначение</div>
+          <div class="meta-value" id="modal-purpose">—</div>
+        </div>
+
+        <div class="meta-row variants-row hidden" id="modal-variants-row">
+          <div class="meta-label">Расцветка</div>
+          <div class="variants-list" id="modal-variants"></div>
+        </div>
+
+        <div class="modal-nav">
+          <button class="nav-btn hidden" id="modal-prev">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2L4 6l4 4"/></svg>
+            Пред.
+          </button>
+          <button class="nav-btn hidden" id="modal-next">
+            След.
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2l4 4-4 4"/></svg>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Вьюер -->
+      <div class="modal-viewer">
+        <div class="viewer-toolbar">
+          <span class="viewer-label">3D Модель</span>
+          <div class="mode-controls">
+            <div class="mode-group">
+              <button class="mode-btn active" data-mode="material">Material</button>
+              <button class="mode-btn" data-mode="wireframe">Wireframe</button>
+              <button class="mode-btn" data-mode="combined">Combined</button>
+            </div>
+            <span class="mode-divider" aria-hidden="true"></span>
+            <div class="mode-group mode-group--channels">
+              <button class="mode-btn channel-btn" data-mode="diffuse">Diffuse</button>
+              <button class="mode-btn channel-btn" data-mode="normal">Normal</button>
+              <button class="mode-btn channel-btn" data-mode="spec">Spec</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="viewer-canvas"></canvas>
+          <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <span id="loader-text">Загрузка...</span>
+          </div>
+        </div>
+
+        <div class="viewer-footer">
+          <span class="viewer-hint">ЛКМ — вращать · Колесо — зум · ПКМ — перемещение</span>
+          <span class="viewer-stats" id="viewer-stats">—</span>
+          <span class="viewer-spacer"></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Тема — применяется до отрисовки, чтобы не было «вспышки» исходной темы
+    (function () {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'xp') document.documentElement.setAttribute('data-theme', 'xp');
+
+      window.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('theme-toggle');
+        const label = btn.querySelector('.theme-toggle-label');
+        const update = () => {
+          const isXP = document.documentElement.getAttribute('data-theme') === 'xp';
+          label.textContent = isXP ? 'Default' : 'XP';
+          btn.title = isXP ? 'Включить дефолтную тему' : 'Включить тему Windows XP';
+        };
+        update();
+        btn.addEventListener('click', () => {
+          const isXP = document.documentElement.getAttribute('data-theme') === 'xp';
+          if (isXP) {
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'default');
+          } else {
+            document.documentElement.setAttribute('data-theme', 'xp');
+            localStorage.setItem('theme', 'xp');
+          }
+          update();
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    // Онбординг — показываем только при первом посещении, после скрытия сплэша
+    (function () {
+      const overlay = document.getElementById('onboard');
+      const closeBtn = document.getElementById('onboard-close');
+
+      // Если уже видели — убираем навсегда
+      if (localStorage.getItem('onboard_seen')) {
+        overlay.classList.add('hidden');
+        return;
+      }
+
+      // Скрываем попап до поры — он появится только когда сплэш уйдёт
+      overlay.classList.add('hidden');
+
+      function showOnboard() {
+        overlay.classList.remove('hidden');
+        // Сбрасываем анимацию, если вдруг уже играла
+        overlay.querySelector('.onboard-box').style.animation = 'none';
+        void overlay.querySelector('.onboard-box').offsetWidth;
+        overlay.querySelector('.onboard-box').style.animation = '';
+      }
+
+      function dismiss() {
+        localStorage.setItem('onboard_seen', '1');
+        overlay.classList.add('hiding');
+        overlay.addEventListener('animationend', () => overlay.classList.add('hidden'), { once: true });
+      }
+
+      closeBtn.addEventListener('click', dismiss);
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) dismiss(); });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !overlay.classList.contains('hidden')) dismiss();
+      });
+
+      // Ждём пока сплэш получит класс .hidden (main.js вызывает hideSplash)
+      const splash = document.getElementById('splash');
+      const observer = new MutationObserver(() => {
+        if (splash.classList.contains('hidden')) {
+          observer.disconnect();
+          setTimeout(showOnboard, 300); // небольшая пауза после исчезновения сплэша
+        }
+      });
+      observer.observe(splash, { attributes: true, attributeFilter: ['class'] });
+    })();
+  </script>
+
+  <script type="module" src="js/main.js"></script>
+  <script>
+    // Typewriter — запускается сразу, до загрузки моделей
+    (function () {
+      const el     = document.getElementById('typewriter');
+      const cursor = document.querySelector('.cursor');
+      const text   = 'Славик Борцев';
+      const delay  = 80;   // мс между буквами
+      const start  = 320;  // мс до начала
+
+      let i = 0;
+      setTimeout(function tick() {
+        el.textContent = text.slice(0, ++i);
+        if (i < text.length) setTimeout(tick, delay);
+        else {
+          cursor.classList.add('done');
+          setTimeout(() => document.getElementById('status-dot').classList.add('visible'), 80);
+        }
+      }, start);
+    })();
+  </script>
+</body>
+</html>

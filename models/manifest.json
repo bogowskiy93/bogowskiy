@@ -1,0 +1,164 @@
+[
+  {
+    "id": "m0",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "Untitled.obj",
+    "mtl": "Untitled.mtl",
+    "textures": {
+      "maps": [
+        "base1.png",
+        "base2.png",
+        "base3.png"
+      ],
+      "normalMap": "normal.png",
+      "specMap": "spec.png"
+    }
+  },
+  {
+    "id": "m1",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "UV fit.obj",
+    "mtl": "UV fit.mtl",
+    "textures": {
+      "maps": [
+        "base1.png"
+      ],
+      "normalMap": "normal.png",
+      "specMap": "spec.png"
+    }
+  },
+  {
+    "id": "m2",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "m1.obj",
+    "mtl": "m1.mtl",
+    "textures": {
+      "maps": [
+        "base1.png",
+        "base2.png"
+      ],
+      "normalMap": "normal.png",
+      "specMap": "spec.png"
+    }
+  },
+  {
+    "id": "m3",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "m1.obj",
+    "mtl": "m1.mtl",
+    "textures": {
+      "maps": [
+        "base1.png"
+      ],
+      "normalMap": "normal.png",
+      "specMap": "spec.png"
+    }
+  },
+  {
+    "id": "m4",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "m1.obj",
+    "mtl": "m1.mtl",
+    "textures": {
+      "maps": [
+        "base1.png",
+        "base2.png",
+        "base3.png",
+        "base4.png"
+      ],
+      "normalMap": "normal.png",
+      "specMap": "spec.png"
+    }
+  },
+  {
+    "id": "m5",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "m1.obj",
+    "mtl": "m1.mtl",
+    "textures": {
+      "maps": [
+        "base1.png",
+        "base2.png"
+      ],
+      "normalMap": "normal.png",
+      "specMap": "spec.png"
+    }
+  },
+  {
+    "id": "m6",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "m1.obj",
+    "mtl": "m1.mtl",
+    "textures": {
+      "maps": [
+        "base.png"
+      ],
+      "normalMap": "normal.png",
+      "specMap": "spec.png"
+    }
+  },
+  {
+    "id": "m7",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "itog.obj",
+    "mtl": "itog.mtl",
+    "textures": {
+      "maps": [
+        "base1.png",
+        "base2.png",
+        "base3.png"
+      ],
+      "normalMap": "normal.png",
+      "specMap": "spec.png"
+    }
+  },
+  {
+    "id": "m8",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "UV.obj",
+    "mtl": "UV.mtl",
+    "textures": {
+      "maps": [
+        "base1.png",
+        "base2.png",
+        "base3.png"
+      ],
+      "normalMap": "normal.png",
+      "specMap": "spec.png"
+    }
+  },
+  {
+    "id": "m9",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "UV.obj",
+    "mtl": "UV.mtl",
+    "textures": {
+      "maps": [
+        "base1.png",
+        "base2.png"
+      ],
+      "normalMap": "normal.png",
+      "specMap": "spec.png"
+    }
+  }
+]
