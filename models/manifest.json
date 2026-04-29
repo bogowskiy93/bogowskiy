@@ -14,7 +14,8 @@
       ],
       "normalMap": "normal.png",
       "specMap": "spec.png"
-    }
+    },
+    "title": "m0"
   },
   {
     "id": "m1",
@@ -29,6 +30,71 @@
       ],
       "normalMap": "normal.png",
       "specMap": "spec.png"
+    },
+    "title": "m1"
+  },
+  {
+    "id": "m10",
+    "title": "m10",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "Untitled.obj",
+    "mtl": "Untitled.mtl",
+    "textures": {
+      "normalMap": "normal.png",
+      "specMap": "spec.png"
+    }
+  },
+  {
+    "id": "m11",
+    "title": "m11",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "Untitled.obj",
+    "mtl": "Untitled.mtl",
+    "textures": {
+      "maps": [
+        "base.png"
+      ]
+    }
+  },
+  {
+    "id": "m12",
+    "title": "m12",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "Untitled.obj",
+    "mtl": "Untitled.mtl",
+    "textures": {
+      "maps": [
+        "base1.png",
+        "base2.png",
+        "base3.png"
+      ],
+      "normalMap": "normal.png",
+      "specMap": "spec.png"
+    }
+  },
+  {
+    "id": "m13",
+    "title": "m13",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "Untitled.obj",
+    "mtl": "Untitled.mtl",
+    "textures": {
+      "maps": [
+        "base1.png",
+        "base2.png",
+        "base3.png",
+        "base4.png",
+        "base5.png",
+        "base6.png"
+      ]
     }
   },
   {
@@ -45,7 +111,8 @@
       ],
       "normalMap": "normal.png",
       "specMap": "spec.png"
-    }
+    },
+    "title": "m2"
   },
   {
     "id": "m3",
@@ -60,7 +127,8 @@
       ],
       "normalMap": "normal.png",
       "specMap": "spec.png"
-    }
+    },
+    "title": "m3"
   },
   {
     "id": "m4",
@@ -78,7 +146,8 @@
       ],
       "normalMap": "normal.png",
       "specMap": "spec.png"
-    }
+    },
+    "title": "m4"
   },
   {
     "id": "m5",
@@ -94,7 +163,8 @@
       ],
       "normalMap": "normal.png",
       "specMap": "spec.png"
-    }
+    },
+    "title": "m5"
   },
   {
     "id": "m6",
@@ -109,7 +179,8 @@
       ],
       "normalMap": "normal.png",
       "specMap": "spec.png"
-    }
+    },
+    "title": "m6"
   },
   {
     "id": "m7",
@@ -126,7 +197,8 @@
       ],
       "normalMap": "normal.png",
       "specMap": "spec.png"
-    }
+    },
+    "title": "m7"
   },
   {
     "id": "m8",
@@ -143,7 +215,8 @@
       ],
       "normalMap": "normal.png",
       "specMap": "spec.png"
-    }
+    },
+    "title": "m8"
   },
   {
     "id": "m9",
@@ -159,6 +232,7 @@
       ],
       "normalMap": "normal.png",
       "specMap": "spec.png"
-    }
+    },
+    "title": "m9"
   }
 ]
