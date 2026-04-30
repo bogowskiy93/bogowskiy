@@ -10,7 +10,9 @@
     "textures": {
       "maps": [
         "base1.png",
-        "base2.png"
+        "base2.png",
+        "base3.png",
+        "base4.png"
       ],
       "normalMap": "normal.png",
       "specMap": "spec.png"
