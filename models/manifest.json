@@ -403,6 +403,7 @@
   {
     "id": "m999",
     "title": "m999",
+    "hidden": true,
     "year": 2026,
     "client": "—",
     "purpose": "Game-ready asset",
