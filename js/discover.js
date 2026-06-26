@@ -2,16 +2,15 @@
  * Автоматически обнаруживает модели в папке models/.
  *
  * Как это работает:
- * 1. Читает листинг директории models/ (python -m http.server отдаёт HTML с ссылками)
- * 2. Для каждой вложенной папки ищет .obj, .mtl, стандартные текстуры
- * 3. Название на сайте = имя папки (например папка "штаны" → "штаны")
- * 4. Год/заказчик/назначение берутся из meta.json (необязательный файл в папке модели)
+ * 1. Сначала читает models/manifest.json — это главный файл управления моделями.
+ * 2. Модели с "hidden": true не показываются на сайте.
+ * 3. Названия карточек назначаются автоматически: Model 1, Model 2, Model 3...
+ * 4. Если manifest.json недоступен, пробует автообнаружение папок models/.
  *
- * Формат meta.json (необязательный, кладётся в папку модели):
+ * В manifest.json можно скрыть модель так:
  * {
- *   "year": 2025,
- *   "client": "Студия X",
- *   "purpose": "Game-ready asset"
+ *   "id": "m999",
+ *   "hidden": true
  * }
  *
  * Чтобы добавить новую модель: просто создай папку с нужным названием,
@@ -72,25 +71,34 @@ async function computeFingerprint(path, files) {
   return hash32(stamps.join('|'));
 }
 
+function applyAutoTitles(projects) {
+  return projects
+    .filter((project) => project && project.hidden !== true)
+    .map((project, index) => ({
+      ...project,
+      title: `Model ${index + 1}`,
+    }));
+}
+
 export async function discoverProjects() {
-  // 1. Сначала пробуем HTTP-листинг (работает локально с python -m http.server)
-  //    Это даёт полную автоматизацию: добавил папку — появилась на сайте.
+  // 1. Сначала читаем manifest.json — теперь это главный файл управления.
+  //    В нём можно поставить "hidden": true, чтобы скрыть модель.
+  const manifest = await fetchJSON(MODELS_ROOT + 'manifest.json');
+  if (Array.isArray(manifest)) {
+    return applyAutoTitles(buildFromManifest(manifest));
+  }
+
+  // 2. Fallback — автообнаружение папок, если manifest.json недоступен.
   try {
     const rootHtml = await fetchText(MODELS_ROOT);
     const folders = parseFolders(rootHtml);
     if (folders.length > 0) {
       const results = await Promise.all(folders.map((folderName) => discoverFolder(folderName)));
       const valid = results.filter(Boolean);
-      if (valid.length > 0) return valid;
+      if (valid.length > 0) return applyAutoTitles(valid);
     }
   } catch {
-    // листинг не доступен (например, Netlify) — пойдём по manifest.json
-  }
-
-  // 2. Fallback — manifest.json (для статик-хостинга вроде Netlify, где нет листинга)
-  const manifest = await fetchJSON(MODELS_ROOT + 'manifest.json');
-  if (Array.isArray(manifest)) {
-    return buildFromManifest(manifest);
+    // листинг не доступен и manifest.json тоже нет
   }
 
   console.error('[discover] Не удалось обнаружить модели. Запусти start.bat или сгенерируй models/manifest.json.');
@@ -143,7 +151,8 @@ async function discoverFolder(folderName) {
 
   return {
     id:      folderName,
-    title:   m.title   || folderName,
+    hidden:  m.hidden === true,
+    title:   m.title   || folderName, // будет заменено на Model N в applyAutoTitles()
     year:    m.year    || new Date().getFullYear(),
     client:  m.client  || '—',
     purpose: m.purpose || 'Game-ready asset',
@@ -159,14 +168,15 @@ async function discoverFolder(folderName) {
 }
 
 /** Если manifest.json есть — строим проекты из него (для production) */
-async function buildFromManifest(manifest) {
+function buildFromManifest(manifest) {
   const projects = [];
 
   for (const item of manifest) {
     const path = `${MODELS_ROOT}${item.id}/`;
     projects.push({
       id:      item.id,
-      title:   item.title || item.id,
+      hidden:  item.hidden === true,
+      title:   item.title || item.id, // будет заменено на Model N в applyAutoTitles()
       year:    item.year    || new Date().getFullYear(),
       client:  item.client  || '—',
       purpose: item.purpose || 'Game-ready asset',
