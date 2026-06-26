@@ -414,6 +414,7 @@
       ],
       "normalMap": "normal.png",
       "specMap": "spec.png"
-    }
+    },
+    "hidden": true
   }
 ]
