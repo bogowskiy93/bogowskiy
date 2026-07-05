@@ -9,7 +9,11 @@
     "mtl": "Untitled.mtl",
     "textures": {
       "maps": [
-        "base1.png"
+        "base1.png",
+        "base2.png",
+        "base3.png",
+        "base4.png",
+        "base5.png"
       ],
       "normalMap": "normal.png",
       "specMap": "spec.png"
