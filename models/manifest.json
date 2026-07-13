@@ -1,5 +1,22 @@
 [
   {
+    "id": "m967",
+    "title": "m967",
+    "year": 2026,
+    "client": "—",
+    "purpose": "Game-ready asset",
+    "obj": "Untitled.obj",
+    "mtl": "Untitled.mtl",
+    "textures": {
+      "maps": [
+        "base5.png",
+        "base6.png"
+      ],
+      "normalMap": "normal.png",
+      "specMap": "spec.png"
+    }
+  },
+  {
     "id": "m968",
     "title": "m968",
     "year": 2026,
