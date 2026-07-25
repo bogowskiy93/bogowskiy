@@ -342,6 +342,100 @@ function buildCard(project, idx) {
   card.classList.add('entering');
 }
 
+// ─── Пак превью (pic/pack.json) ───────────────────────────────────
+// 1) Открой сайт — все превью прогрузятся (из пака или сгенерируются).
+// 2) F12 → консоль → введи: pic
+// 3) Скачается pack.json — положи его в папку pic/ проекта.
+// 4) Добавил новые модели? Обнови страницу, снова введи pic, замени файл.
+const PIC_PACK_URL = 'pic/pack.json';
+
+async function loadPicPack() {
+  try {
+    const res = await fetch(PIC_PACK_URL, { cache: 'no-store' });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data || typeof data.previews !== 'object') return null;
+    return data.previews;
+  } catch {
+    return null;
+  }
+}
+
+async function srcToDataURL(src) {
+  if (!src) return null;
+  if (src.startsWith('data:')) return src;
+  try {
+    const res = await fetch(src);
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return await new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => resolve(fr.result);
+      fr.onerror = reject;
+      fr.readAsDataURL(blob);
+    });
+  } catch {
+    return null;
+  }
+}
+
+async function exportPicPack() {
+  const previews = {};
+  let ok = 0;
+  let fail = 0;
+
+  for (let i = 0; i < projects.length; i++) {
+    const p = projects[i];
+    if (!p.model) continue;
+    const src = cardImages[i]?.img?.src || '';
+    const dataURL = await srcToDataURL(src);
+    if (!dataURL) {
+      console.warn(`[pic] нет превью для ${p.id}`);
+      fail++;
+      continue;
+    }
+    previews[p.id] = dataURL;
+    ok++;
+  }
+
+  if (!ok) {
+    console.error('[pic] нечего скачивать — дождись окончания загрузки превью');
+    return;
+  }
+
+  const pack = {
+    generatedAt: new Date().toISOString(),
+    count: ok,
+    previews,
+  };
+
+  const blob = new Blob([JSON.stringify(pack)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'pack.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+  console.log(
+    `[pic] готово: ${ok} превью` +
+      (fail ? `, пропущено ${fail}` : '') +
+      '. Положи pack.json в папку pic/ проекта.'
+  );
+}
+
+// В консоли достаточно вписать: pic
+Object.defineProperty(window, 'pic', {
+  configurable: true,
+  get() {
+    void exportPicPack();
+    return 'Скачиваю pack.json… потом положи его в папку pic/';
+  },
+});
+window.exportPicPack = exportPicPack;
+
 async function loadPreviews() {
   // Внутренний фейлсейф: если генерация превью зависла — скрываем сплэш всё равно.
   const previewFailsafe = setTimeout(() => {
@@ -353,9 +447,15 @@ async function loadPreviews() {
 
   let loaded = 0;
   const total = projects.length;
+  const packMap = (await loadPicPack()) || {};
+  const packIds = Object.keys(packMap);
+  if (packIds.length) {
+    console.log(`[pic] загружен пак: ${packIds.length} превью`);
+  }
 
-  // Сначала всё, что имеет готовый файл превью — грузим мгновенно как картинку
+  // Приоритет: pic/pack.json → preview.* в папке модели → генерация WebGL
   const needGenerate = [];
+  let fromPack = 0;
   for (let i = 0; i < total; i++) {
     if (!projects[i].model) {
       cardImages[i].spinner.style.display = 'none';
@@ -363,6 +463,17 @@ async function loadPreviews() {
       setSplashProgress(loaded, total);
       continue;
     }
+
+    const packed = packMap[projects[i].id];
+    if (packed) {
+      cardImages[i].img.src = packed;
+      revealFloat(i, packed);
+      fromPack++;
+      loaded++;
+      setSplashProgress(loaded, total);
+      continue;
+    }
+
     if (projects[i].preview) {
       cardImages[i].img.src = projects[i].preview;
       revealFloat(i, projects[i].preview);
@@ -370,6 +481,7 @@ async function loadPreviews() {
       setSplashProgress(loaded, total);
       continue;
     }
+
     needGenerate.push(i);
   }
 
@@ -396,31 +508,22 @@ async function loadPreviews() {
   hideSplash();
 
   clearTimeout(previewFailsafe);
-}
 
-// ─── Экспорт превью в файлы (для разовой подготовки) ─────────────
-// Запусти в консоли: exportPreviews() — после генерации скачает все JPG.
-// Положи их в папки моделей как preview.jpg, перегенерируй manifest —
-// сайт будет грузить превью мгновенно.
-window.exportPreviews = async function () {
-  for (let i = 0; i < projects.length; i++) {
-    const p = projects[i];
-    if (!p.model) continue;
-    const src = cardImages[i].img.src;
-    if (!src || !src.startsWith('data:')) {
-      console.warn(`[exportPreviews] нет данных для ${p.id} — открой страницу до конца`);
-      continue;
+  const modelCount = projects.filter((p) => p.model).length;
+  if (needGenerate.length > 0 || fromPack < modelCount) {
+    const missing = modelCount - fromPack;
+    if (missing > 0) {
+      console.info(
+        `[pic] ${missing} моделей нет в паке (или пак устарел). ` +
+          'Введи pic в консоли → скачается pack.json → положи в папку pic/'
+      );
     }
-    const a = document.createElement('a');
-    a.href = src;
-    a.download = `${p.id}_preview.jpg`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    await new Promise((r) => setTimeout(r, 200));
+  } else if (fromPack > 0) {
+    console.log(`[pic] все ${fromPack} превью из пака. Обновить пак: введи pic`);
+  } else {
+    console.info('[pic] пак ещё не создан. Введи pic в консоли после загрузки.');
   }
-  console.log('[exportPreviews] готово. Переименуй файлы в preview.jpg и положи в папки моделей.');
-};
+}
 
 // ─── Вьюер ────────────────────────────────────────────────────────
 let viewer = null;
